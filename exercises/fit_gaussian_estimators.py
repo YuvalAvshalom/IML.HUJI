@@ -7,13 +7,25 @@ pio.templates.default = "simple_white"
 
 def test_univariate_gaussian():
     # Question 1 - Draw samples and print fitted model
-    raise NotImplementedError()
+
+    uni = UnivariateGaussian()
+    s = np.random.normal(10, 1, 1000)
+    res = uni.fit(s)
+    print('(' + str(res.mu_) + ', ' + str(res.var_) + ')')
 
     # Question 2 - Empirically showing sample mean is consistent
-    raise NotImplementedError()
+
+    ms = np.linspace(10, 1000, 1000).astype(int)
+    mu, sigma = 10, 1
+    estimated_mean = []
+
+    for m in ms:
+        X = np.random.normal(mu, sigma, size=m)
+        estimated_mean.append(uni.fit(X).mu_)
+
+    go.Figure([go.scatter(x=ms, y=estimated_mean, mode='markers+lines')])
 
     # Question 3 - Plotting Empirical PDF of fitted model
-    raise NotImplementedError()
 
 
 def test_multivariate_gaussian():
@@ -30,4 +42,4 @@ def test_multivariate_gaussian():
 if __name__ == '__main__':
     np.random.seed(0)
     test_univariate_gaussian()
-    test_multivariate_gaussian()
+    # test_multivariate_gaussian()
