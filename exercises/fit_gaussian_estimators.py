@@ -4,13 +4,15 @@ import plotly.graph_objects as go
 import plotly.io as pio
 pio.templates.default = "simple_white"
 
+SAMPLES_NUM = 1000
+
 
 def test_univariate_gaussian():
     # Question 1 - Draw samples and print fitted model
 
     uni = UnivariateGaussian()
     mu, sigma = 10, 1
-    s = np.random.normal(mu, sigma, 1000)
+    s = np.random.normal(mu, sigma, SAMPLES_NUM)
     res = uni.fit(s)
     print('(' + str(res.mu_) + ', ' + str(res.var_) + ')')
 
@@ -52,7 +54,7 @@ def test_multivariate_gaussian():
                       [0.2, 2, 0, 0],
                       [0, 0, 1, 0],
                       [0.5, 0, 0, 1]])
-    s = np.random.multivariate_normal(mu, sigma, 1000)
+    s = np.random.multivariate_normal(mu, sigma, SAMPLES_NUM)
     res = multi_uni.fit(s)
     print(str(res.mu_) + '\n' + str(res.cov_))
 
@@ -72,8 +74,8 @@ def test_multivariate_gaussian():
     go.Figure([go.Heatmap(x=ms, y=ms, z=np.asarray(logs))], layout=go.Layout(title=
                                                                  r"$\text{ Log Likelihood as function of "
                                                                  r"different expectancies}$",
-                                                                 width=1000, height=1000, xaxis_title="$f3$",
-                                                                 yaxis_title="$f1$")).show()
+                                                                 width=700, height=700,
+                                                                 xaxis_title="$f3$", yaxis_title="$f1$")).show()
 
     # Question 6 - Maximum likelihood
 
