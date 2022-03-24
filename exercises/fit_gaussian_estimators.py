@@ -90,8 +90,6 @@ def test_multivariate_gaussian():
     col = int(index % 200)
     print("Maximum value is achieved for the pair: f1 = " + str(round(ms[row], 3)) + " f3 = " + str(round(ms[col], 3)))
 
-    print(res.pdf(s))
-
 
 if __name__ == '__main__':
     np.random.seed(0)
