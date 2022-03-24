@@ -54,9 +54,9 @@ class UnivariateGaussian:
         """
         self.mu_ = np.mean(X)
         if self.biased_:
-            self.var_ = np.var(X) ** 2
+            self.var_ = np.var(X)
         else:
-            self.var_ = np.var(X, ddof=1) ** 2
+            self.var_ = np.var(X, ddof=1)
         self.fitted_ = True
         return self
 
@@ -180,15 +180,25 @@ class MultivariateGaussian:
         """
         if not self.fitted_:
             raise ValueError("Estimator must first be fitted before calling `pdf` function")
-        n = self.cov_.shape
-        X = X.reshape(-1, 1)
-        self.mu_ = self.mu_.reshape(-1, 1)
 
-        SIGMA_inv = np.linalg.inv(self.cov_)
-        denominator = np.sqrt((2 * np.pi) ** n * np.linalg.det(self.cov_))
-        power = -(1 / 2) * np.matmul((X - self.mu_).T, SIGMA_inv, (X - self.mu_))
+        # n = self.cov_.shape[0]
+        # SIGMA_inv = np.linalg.inv(self.cov_)
+        # denominator = np.sqrt((2 * np.pi) ** n * np.linalg.det(self.cov_))
+        # power = -(1 / 2) * ((X - self.mu_) @ SIGMA_inv * (X - self.mu_))
+        #
+        # return (1.0 / denominator) * np.exp(power)
 
-        return float((1. / denominator) * np.exp(power))
+        n = X.shape[0]
+        d = self.cov_.shape[0]
+        cov_matrix = self.cov_
+        cov_inv = np.linalg.inv(cov_matrix)
+        res = np.zeros((n,))
+        for i in range(n):
+            x_mu = X[i] - self.mu_
+            exp = np.exp(-1/2 * np.matmul(np.matmul(x_mu.T, cov_inv), x_mu))
+            denominator = np.sqrt(((2 * np.pi) ** d) * det(cov_matrix))
+            res[i] = exp / denominator
+        return res
 
     @staticmethod
     def log_likelihood(mu: np.ndarray, cov: np.ndarray, X: np.ndarray) -> float:
@@ -212,7 +222,6 @@ class MultivariateGaussian:
 
         m = X.shape[0]
         d = X.shape[1]
-        X_minus_mu = X - mu
-
+        x_mu = X - mu
         return -m * d / 2 * np.log(2 * np.pi) - (m / 2) * slogdet(cov)[1] \
-               - 1/2 * np.sum(X_minus_mu @ (inv(cov)) * X_minus_mu)
+               - 1/2 * np.sum(x_mu @ (inv(cov)) * x_mu)

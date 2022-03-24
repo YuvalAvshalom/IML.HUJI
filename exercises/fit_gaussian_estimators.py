@@ -5,6 +5,11 @@ import plotly.io as pio
 pio.templates.default = "simple_white"
 
 SAMPLES_NUM = 1000
+LEFT_CIRCLE = '('
+RIGHT_CIRCLE = ')'
+COMMA = ', '
+GRAPH_SIZE = 500
+HEATMAP_SIZE = 700
 
 
 def test_univariate_gaussian():
@@ -14,7 +19,7 @@ def test_univariate_gaussian():
     mu, sigma = 10, 1
     s = np.random.normal(mu, sigma, SAMPLES_NUM)
     res = uni.fit(s)
-    print('(' + str(res.mu_) + ', ' + str(res.var_) + ')')
+    print(LEFT_CIRCLE + str(res.mu_) + COMMA + str(res.var_) + RIGHT_CIRCLE)
 
     # Question 2 - Empirically showing sample mean is consistent
 
@@ -25,11 +30,11 @@ def test_univariate_gaussian():
         diff.append(abs(uni.fit(s[0:m]).mu_ - mu))
 
     go.Figure([go.Scatter(x=ms, y=diff, mode='markers+lines')],
-              layout=go.Layout(title=r"$\text{ Distance between estimated - "
+              layout=go.Layout(title=r"$\text{ Distance between estimated "
                                      r"and true value of the expectation as a function of samples number}$",
                                xaxis_title="$m\\text{ - number of samples}$",
                                yaxis_title="r$distance$",
-                               height=500)).show()
+                               height=GRAPH_SIZE)).show()
 
     # Question 3 - Plotting Empirical PDF of fitted model
 
@@ -39,7 +44,7 @@ def test_univariate_gaussian():
               layout=go.Layout(title=r"$\text{ Sampled values distribution}$",
                                xaxis_title="$m\\text{ - sampled values}$",
                                yaxis_title="r$ pdf - values$",
-                               height=500)).show()
+                               height=GRAPH_SIZE)).show()
 
     # As I expected, the samples' distribution is gaussian around the expectation (10)
 
@@ -71,10 +76,11 @@ def test_multivariate_gaussian():
         j = 0
         i += 1
 
-    go.Figure([go.Heatmap(x=ms, y=ms, z=np.asarray(logs))], layout=go.Layout(title=
+    go.Figure([go.Heatmap(x=ms, y=ms, z=np.asarray(logs), colorbar=dict(title="Log Likelihood"))],
+                                                                 layout=go.Layout(title=
                                                                  r"$\text{ Log Likelihood as function of "
                                                                  r"different expectancies}$",
-                                                                 width=700, height=700,
+                                                                 width=HEATMAP_SIZE, height=HEATMAP_SIZE,
                                                                  xaxis_title="$f3$", yaxis_title="$f1$")).show()
 
     # Question 6 - Maximum likelihood
@@ -84,10 +90,10 @@ def test_multivariate_gaussian():
     col = int(index % 200)
     print("Maximum value is achieved for the pair: f1 = " + str(round(ms[row], 3)) + " f3 = " + str(round(ms[col], 3)))
 
+    print(res.pdf(s))
+
 
 if __name__ == '__main__':
     np.random.seed(0)
     test_univariate_gaussian()
     test_multivariate_gaussian()
-
-
